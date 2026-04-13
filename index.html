@@ -3,214 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scribes Guild | S.E.E. Platform</title>
+    <title>Scribes Guild | Command Center</title>
     <style>
-        :root { --primary: #3498db; --dark: #2c3e50; --gold: #f39c12; --bg: #f4f4f9; --error: #e74c3c; --success: #27ae60; }
+        :root { --primary: #3498db; --dark: #2c3e50; --gold: #f39c12; --bg: #f4f4f9; --error: #e74c3c; --success: #27ae60; --sidebar-w: 250px; }
         body { font-family: -apple-system, system-ui, sans-serif; background: var(--bg); margin: 0; padding: 0; color: #333; overflow-x: hidden; }
         
-        /* HEADER & STATS */
-        .header { background: var(--dark); color: white; padding: 15px; position: sticky; top: 0; z-index: 100; display: flex; justify-content: space-between; align-items: center; }
+        /* HEADER */
+        .header { background: var(--dark); color: white; padding: 10px 20px; position: sticky; top: 0; z-index: 1000; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .menu-btn { background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; padding: 5px; }
         .equity-badge { background: var(--gold); padding: 5px 12px; border-radius: 20px; font-weight: bold; font-size: 0.8rem; }
 
-        /* NAVIGATION BAR (BOTTOM) */
-        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: white; border-top: 1px solid #ddd; display: flex; justify-content: space-around; padding: 10px 0; z-index: 1000; }
-        .nav-item { border: none; background: none; color: #7f8c8d; font-size: 0.75rem; cursor: pointer; display: flex; flex-direction: column; align-items: center; }
-        .nav-item.active { color: var(--primary); font-weight: bold; }
+        /* SIDEBAR DRAWER */
+        .sidebar { position: fixed; left: calc(-1 * var(--sidebar-w)); top: 0; width: var(--sidebar-w); height: 100%; background: white; box-shadow: 5px 0 15px rgba(0,0,0,0.1); transition: 0.3s ease; z-index: 1100; padding-top: 60px; }
+        .sidebar.open { left: 0; }
+        .sidebar-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; z-index: 1050; }
+        .sidebar-overlay.open { display: block; }
+        
+        .nav-link { display: block; padding: 15px 25px; color: var(--dark); text-decoration: none; font-weight: 600; border-left: 4px solid transparent; transition: 0.2s; cursor: pointer; }
+        .nav-link:hover { background: #f0f7ff; color: var(--primary); }
+        .nav-link.active { background: #f0f7ff; border-left-color: var(--primary); color: var(--primary); }
 
-        /* SECTOR NAV (TOP) */
-        .sector-nav { display: flex; overflow-x: auto; background: white; padding: 12px; gap: 10px; border-bottom: 1px solid #ddd; scrollbar-width: none; }
-        .sector-btn { white-space: nowrap; padding: 8px 15px; border-radius: 20px; border: 1.5px solid var(--primary); background: transparent; color: var(--primary); cursor: pointer; font-size: 0.8rem; }
-        .sector-btn.active { background: var(--primary); color: white; }
+        /* SECTOR BUTTONS (Inside Sidebar) */
+        .sector-group { padding: 15px 25px; border-top: 1px solid #eee; margin-top: 10px; }
+        .sector-title { font-size: 0.7rem; color: #999; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+        .sector-item { padding: 8px 0; font-size: 0.9rem; cursor: pointer; display: flex; justify-content: space-between; }
+        .sector-item.locked { opacity: 0.5; cursor: not-allowed; }
 
-        /* VIEWS & CARDS */
-        .view { padding: 20px; max-width: 500px; margin: 0 auto 80px auto; display: none; }
+        /* MAIN CONTENT */
+        .main-content { padding: 25px; max-width: 600px; margin: 0 auto; transition: 0.3s; }
+        .view { display: none; }
         .view.active { display: block; animation: fadeIn 0.3s; }
-        .card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); position: relative; }
         
-        /* LEDGER ITEMS */
-        .ledger-item { background: white; border-bottom: 1px solid #eee; padding: 12px; font-size: 0.85rem; display: flex; justify-content: space-between; }
-        .status-pending { color: var(--gold); font-size: 0.7rem; font-weight: bold; }
+        .card { background: white; border-radius: 15px; padding: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
+        .mission-text { background: #e8f4f8; padding: 20px; border-radius: 10px; border-left: 5px solid var(--primary); margin: 20px 0; font-style: italic; line-height: 1.6; }
+        textarea { width: 100%; height: 150px; border: 1px solid #ddd; border-radius: 10px; padding: 15px; box-sizing: border-box; font-size: 1rem; margin-bottom: 20px; resize: none; }
+        .btn-submit { background: var(--primary); color: white; border: none; width: 100%; padding: 15px; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 1rem; }
 
-        /* ASENSION BLOCK */
-        .ascension-box { background: var(--dark); color: white; padding: 15px; border-radius: 10px; margin-top: 15px; border-left: 5px solid var(--gold); }
-        
-        /* FORM ELEMENTS */
-        .mission-text { background: #e8f4f8; padding: 15px; border-radius: 8px; border-left: 4px solid var(--primary); margin: 15px 0; font-style: italic; font-size: 0.9rem; }
-        textarea { width: 100%; height: 120px; border: 1px solid #ccc; border-radius: 8px; padding: 10px; box-sizing: border-box; font-family: inherit; margin-bottom: 15px; }
-        .btn-submit { background: var(--primary); color: white; border: none; width: 100%; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        /* LEDGER */
+        .ledger-item { border-bottom: 1px solid #eee; padding: 15px 0; display: flex; justify-content: space-between; align-items: center; }
         
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
 
+<div class="sidebar-overlay" id="overlay" onclick="toggleSidebar()"></div>
+<div class="sidebar" id="sidebar">
+    <div class="nav-link active" onclick="switchView('mission', this)">🎯 Current Mission</div>
+    <div class="nav-link" onclick="switchView('ledger', this)">📜 My Ledger</div>
+    
+    <div class="sector-group">
+        <div class="sector-title">Sectors</div>
+        <div class="sector-item" onclick="changeSector('General', 0)">🌐 General <span>✓</span></div>
+        <div class="sector-item" id="sec-med" onclick="changeSector('Medical', 50)">🏥 Medical <span id="lock-med">🔒</span></div>
+        <div class="sector-item" id="sec-law" onclick="changeSector('Law', 150)">⚖️ Law <span id="lock-law">🔒</span></div>
+        <div class="sector-item" id="sec-fin" onclick="changeSector('Finance', 100)">💰 Finance <span id="lock-fin">🔒</span></div>
+    </div>
+</div>
+
 <div class="header">
-    <div>
-        <div style="font-size: 0.6rem; opacity: 0.8; text-transform: uppercase;">ID: Human_Scribe_01</div>
-        <div style="font-weight: bold; font-size: 1rem;" id="user-rank">Novice</div>
+    <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+    <div style="text-align: center;">
+        <div style="font-size: 0.6rem; opacity: 0.8; text-transform: uppercase;">Rank</div>
+        <div style="font-weight: bold;" id="user-rank">Novice</div>
     </div>
     <div class="equity-badge"><span id="equity-balance">0</span> Equity</div>
 </div>
 
-<div id="mission-view" class="view active">
-    <div class="sector-nav">
-        <button class="sector-btn active" onclick="switchSector('General', 0)">🌐 General</button>
-        <button class="sector-btn" onclick="switchSector('Medical', 50)">🏥 Medical</button>
-        <button class="sector-btn" onclick="switchSector('Law', 150)">⚖️ Law</button>
-        <button class="sector-btn" onclick="switchSector('Finance', 100)">💰 Finance</button>
-    </div>
-
-    <div class="card" id="mission-card" style="margin-top: 20px;">
-        <h2 id="mission-title" style="margin:0; font-size: 1.1rem;">General Mission</h2>
-        <div class="mission-text" id="mission-body">
-            "The municipal water repository will undergo prophylactic chlorination procedures to mitigate pathogenic proliferation."
-        </div>
-        <textarea id="submission-box" placeholder="Your human translation..."></textarea>
-        <button class="btn-submit" onclick="submitWork()">Submit to Ledger</button>
-        <p id="status-msg" style="text-align:center; font-weight:bold; margin-top:10px; font-size:0.8rem;"></p>
-    </div>
-
-    <div class="card" id="lock-screen" style="display:none; text-align:center; padding:40px 10px;">
-        <div style="font-size:3rem;">🔒</div>
-        <h3>Sector Locked</h3>
-        <p id="lock-msg" style="font-size:0.85rem; color:#666;"></p>
-    </div>
-
-    <div id="ascension-ui" class="ascension-box" style="display:none;">
-        <div style="color: var(--gold); font-size: 0.7rem; font-weight: bold;">SPECIAL EVENT</div>
-        <div style="font-weight: bold; margin-bottom: 5px;">Ascension Trial: Journeyman</div>
-        <p style="font-size: 0.75rem; margin-bottom: 10px;">Complete this high-stakes task for manual verification to rank up.</p>
-        <button onclick="startAscension()" style="background: var(--gold); border:none; padding:5px 10px; border-radius:4px; font-weight:bold; cursor:pointer;">Begin Trial</button>
-    </div>
-</div>
-
-<div id="ledger-view" class="view">
-    <h2 style="margin-top:0;">Contribution History</h2>
-    <div id="ledger-list" class="card" style="padding:0;">
-        </div>
-</div>
-
-<nav class="bottom-nav">
-    <button class="nav-item active" onclick="switchTab('mission', this)">
-        <span>Missions</span>
-    </button>
-    <button class="nav-item" onclick="switchTab('ledger', this)">
-        <span>My Ledger</span>
-    </button>
-</nav>
-
-<script>
-    // --- STATE MANAGEMENT ---
-    let equity = parseInt(localStorage.getItem('equityPoints') || 0);
-    let history = JSON.parse(localStorage.getItem('scribeHistory') || "[]");
-    let isPasted = false;
-    const formURL = "https://docs.google.com/forms/d/e/1FAIpQLSc3kFyW7SM4cySwOCm8gfPnWDbW6XFJoXEJlrdqOlcwRzd6XA/formResponse";
-
-    window.onload = () => {
-        updateStats();
-        updateLedger();
-        document.getElementById('submission-box').addEventListener('paste', () => isPasted = true);
-    };
-
-    function updateStats() {
-        document.getElementById('equity-balance').innerText = equity;
-        let rank = "Novice";
-        if (equity >= 150) rank = "Master Scribe";
-        else if (equity >= 50) rank = "Journeyman";
-        document.getElementById('user-rank').innerText = rank;
-        
-        // Show ascension if eligible
-        if(equity >= 50 && rank === "Novice") {
-            document.getElementById('ascension-ui').style.display = 'block';
-        }
-    }
-
-    // --- NAVIGATION ---
-    function switchTab(tab, el) {
-        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-        document.getElementById(tab + '-view').classList.add('active');
-        el.classList.add('active');
-        if(tab === 'ledger') updateLedger();
-    }
-
-    function switchSector(sector, minReq) {
-        document.querySelectorAll('.sector-btn').forEach(b => b.classList.remove('active'));
-        event.target.classList.add('active');
-
-        if (equity < minReq) {
-            document.getElementById('mission-card').style.display = 'none';
-            document.getElementById('lock-screen').style.display = 'block';
-            document.getElementById('lock-msg').innerText = `Reach ${minReq} Equity to unlock the ${sector} sector.`;
-        } else {
-            document.getElementById('mission-card').style.display = 'block';
-            document.getElementById('lock-screen').style.display = 'none';
-            document.getElementById('mission-title').innerText = sector + " Mission";
-        }
-    }
-
-    // --- WORK ENGINE ---
-    function submitWork() {
-        const text = document.getElementById('submission-box').value;
-        const status = document.getElementById('status-msg');
-
-        if (isPasted) { status.innerText = "❌ Manual entry required."; return; }
-        if (text.length < 15) { status.innerText = "❌ Submission too short."; return; }
-
-        status.style.color = "var(--primary)";
-        status.innerText = "⏳ Recording to Ledger...";
-
-        const formData = new FormData();
-        formData.append("entry.337638736", "Human_Scribe_01");
-        formData.append("entry.1381339047", text);
-
-        fetch(formURL, { method: "POST", mode: "no-cors", body: formData })
-        .then(() => {
-            const reward = 10; // Default for prototype
-            equity += reward;
-            localStorage.setItem('equityPoints', equity);
-            
-            // Record to History
-            const entry = {
-                title: document.getElementById('mission-title').innerText,
-                points: reward,
-                date: new Date().toLocaleDateString()
-            };
-            history.unshift(entry);
-            localStorage.setItem('scribeHistory', JSON.stringify(history));
-
-            status.style.color = "var(--success)";
-            status.innerText = `✅ +${reward} Equity Recorded.`;
-            document.getElementById('submission-box').value = "";
-            isPasted = false;
-            updateStats();
-        });
-    }
-
-    function updateLedger() {
-        const list = document.getElementById('ledger-list');
-        if(history.length === 0) {
-            list.innerHTML = "<p style='padding:20px; text-align:center;'>No history found.</p>";
-            return;
-        }
-        list.innerHTML = history.map(item => `
-            <div class="ledger-item">
-                <div>
-                    <strong>${item.title}</strong><br>
-                    <span style="font-size:0.7rem; color:#888;">${item.date}</span>
-                </div>
-                <div style="text-align:right">
-                    <span class="status-pending">PENDING</span><br>
-                    <strong>+${item.points}</strong>
-                </div>
-            </div>
-        `).join('');
-    }
-
-    function startAscension() {
-        alert("Genesis Event: Your next submission will be prioritized for High Council review.");
-        document.getElementById('ascension-ui').style.display = 'none';
-    }
-</script>
-</body>
-</html>
+<div class="main-content">
+    
+    <div id="mission-view" class="view active">
+        <div class="card" id="mission-card">
+            <h2 id="active-sector-title" style="margin-top:0;">General Sector</h2>
