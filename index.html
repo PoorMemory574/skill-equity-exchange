@@ -61,3 +61,174 @@
     <button onclick="toggleSidebar()" style="background:none; border:none; color:white; font-size:1.8rem; cursor:pointer;">☰</button>
     <div style="font-weight: bold; color: var(--gold);"><span id="equity-balance">0</span> Equity</div>
 </div>
+
+<div class="main-content" id="main-content">
+    <div id="mission-view" class="view active">
+        <div class="card">
+            <div class="progress-wrapper">
+                <div class="progress-text">
+                    <span>Daily Progress</span>
+                    <span id="daily-count">0 / 5</span>
+                </div>
+                <div class="progress-outer">
+                    <div class="progress-inner" id="progress-bar"></div>
+                </div>
+            </div>
+
+            <div id="mission-workspace">
+                <h3 id="sector-title" style="margin:0;">General Sector</h3>
+                <div class="mission-text" id="mission-body">Loading...</div>
+                <textarea id="submission-box" placeholder="Your human translation..."></textarea>
+                <button class="btn-submit" id="submit-btn" onclick="submitWork()">Submit Submission</button>
+                <p id="status-msg" style="text-align:center; font-weight:bold; margin-top:15px;"></p>
+            </div>
+
+            <div id="daily-complete" style="display:none; text-align:center; padding: 30px 10px;">
+                <h2 style="color:var(--success)">🌟 Goal Achieved!</h2>
+                <p>You've completed your daily quota. An extra 25 Equity points have been added to your ledger.</p>
+                <button class="btn-submit" onclick="switchView('ledger')" style="background:var(--dark)">View History</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="ledger-view" class="view">
+        <div class="card">
+            <h2 style="margin-top:0;">Your Ledger</h2>
+            <div id="ledger-list"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const missionLibrary = {
+        'General': [
+            "The municipal water repository will undergo prophylactic chlorination.",
+            "Initial observations indicate a significant deficit in quarterly fiscal projections.",
+            "Please facilitate the redistribution of internal logistical resources immediately.",
+            "The aerodynamic properties of the prototype were evaluated via wind tunnel simulation.",
+            "Commence the systematic digitization of all analog archival documentation."
+        ],
+        'Medical': [
+            "The patient presents with acute idiopathic inflammation in the upper extremities.",
+            "Administer 500mg of paracetamol intravenously every six hours post-op.",
+            "Magnetic Resonance Imaging confirmed a laceration to the anterior cruciate ligament.",
+            "The prophylactic efficacy of the vaccine was measured over a twelve-month period.",
+            "Elevated levels of glucose were detected during the routine phlebotomy procedure."
+        ]
+    };
+
+    let currentSector = 'General';
+    let equity = parseInt(localStorage.getItem('equityPoints') || 0);
+    let history = JSON.parse(localStorage.getItem('scribeHistory') || "[]");
+    let dailyDone = parseInt(localStorage.getItem('dailyDone') || 0);
+
+    // DAILY RESET LOGIC
+    const today = new Date().toLocaleDateString();
+    if (localStorage.getItem('lastDate') !== today) {
+        dailyDone = 0;
+        localStorage.setItem('dailyDone', 0);
+        localStorage.setItem('lastDate', today);
+    }
+
+    function enterApp() {
+        document.getElementById('welcome-view').style.display = 'none';
+        document.getElementById('app-header').style.display = 'flex';
+        document.getElementById('main-content').style.display = 'block';
+        updateUI();
+        loadNewMission();
+    }
+
+    function updateUI() {
+        document.getElementById('equity-balance').innerText = equity;
+        document.getElementById('daily-count').innerText = `${dailyDone} / 5`;
+        
+        // Update Progress Bar
+        const percent = Math.min((dailyDone / 5) * 100, 100);
+        document.getElementById('progress-bar').style.width = percent + "%";
+        
+        if (dailyDone >= 5) {
+            document.getElementById('mission-workspace').style.display = 'none';
+            document.getElementById('daily-complete').style.display = 'block';
+        }
+    }
+
+    function loadNewMission() {
+        const pool = missionLibrary[currentSector];
+        const randomText = pool[Math.floor(Math.random() * pool.length)];
+        document.getElementById('mission-body').innerText = randomText;
+    }
+
+    function submitWork() {
+        const text = document.getElementById('submission-box').value.trim();
+        const status = document.getElementById('status-msg');
+        if (!text) return;
+
+        const isBypass = (text.toLowerCase() === 'skip');
+        if (!isBypass && text.length < 15) { alert("Please provide a more detailed translation."); return; }
+
+        let pointsAwarded = 10;
+        dailyDone++;
+
+        if (dailyDone === 5) {
+            pointsAwarded += 25; // THE BONUS
+        }
+
+        equity += pointsAwarded;
+        localStorage.setItem('equityPoints', equity);
+        localStorage.setItem('dailyDone', dailyDone);
+
+        history.unshift({
+            sector: currentSector + (isBypass ? " (Dev)" : ""),
+            pts: pointsAwarded,
+            date: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+            isBonus: (dailyDone === 5)
+        });
+        localStorage.setItem('scribeHistory', JSON.stringify(history));
+
+        document.getElementById('submission-box').value = "";
+        updateUI();
+        if (dailyDone < 5) loadNewMission();
+        
+        status.style.color = "var(--success)";
+        status.innerText = `✅ +${pointsAwarded} Equity Recorded!`;
+        setTimeout(() => { status.innerText = ""; }, 3000);
+    }
+
+    function switchView(v) {
+        document.getElementById('mission-view').classList.remove('active');
+        document.getElementById('ledger-view').classList.remove('active');
+        document.getElementById(v + '-view').classList.add('active');
+        if(v === 'ledger') renderLedger();
+        if(document.getElementById('sidebar').classList.contains('open')) toggleSidebar();
+    }
+
+    function toggleSidebar() {
+        document.getElementById('sidebar').classList.toggle('open');
+        document.getElementById('overlay').classList.toggle('active');
+    }
+
+    function changeSector(name, req) {
+        if(equity < req) { alert("Access Denied: 50+ Equity required."); return; }
+        currentSector = name;
+        document.getElementById('sector-title').innerText = name + " Sector";
+        loadNewMission();
+        switchView('mission');
+    }
+
+    function renderLedger() {
+        const list = document.getElementById('ledger-list');
+        list.innerHTML = history.length ? history.map(h => `
+            <div class="ledger-row">
+                <div>
+                    <strong>${h.sector}</strong>
+                    ${h.isBonus ? '<span class="bonus-tag">DAILY BONUS</span>' : ''}
+                    <br><small style="color:#888;">${h.date}</small>
+                </div>
+                <span style="color:var(--success); font-weight:bold;">+${h.pts}</span>
+            </div>`).join('') : "No activity yet.";
+    }
+
+    updateUI();
+</script>
+</body>
+</html>
