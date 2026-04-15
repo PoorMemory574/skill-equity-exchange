@@ -3,226 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scribes Guild | S.E.E. Platform</title>
+    <title>Scribes Guild | S.E.E.</title>
     <style>
-        :root { --primary: #3498db; --dark: #2c3e50; --gold: #f39c12; --bg: #f4f4f9; --sidebar-w: 260px; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: var(--bg); margin: 0; padding: 0; color: #333; overflow-x: hidden; }
+        :root { --primary: #3498db; --dark: #2c3e50; --gold: #f39c12; --bg: #f4f4f9; --success: #2ecc71; --sidebar-w: 260px; }
+        body { font-family: -apple-system, system-ui, sans-serif; background: var(--bg); margin: 0; padding: 0; color: #333; }
         
-        /* 1. WELCOME SCREEN */
-        #welcome-view { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: var(--dark); color: white; display: flex; 
-            flex-direction: column; justify-content: center; align-items: center; 
-            z-index: 5000; text-align: center; padding: 20px; box-sizing: border-box;
-        }
-        .start-btn { 
-            position: absolute; bottom: 50px; left: 50%; transform: translateX(-50%);
-            background: var(--primary); color: white; border: none; padding: 15px 40px; 
-            border-radius: 30px; font-weight: bold; font-size: 1.1rem; cursor: pointer; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3); transition: 0.2s;
-        }
-        .start-btn:active { transform: translateX(-50%) scale(0.95); }
+        /* WELCOME & HEADER */
+        #welcome-view { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--dark); color: white; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 5000; text-align: center; padding: 20px; box-sizing: border-box; }
+        .start-btn { position: absolute; bottom: 50px; left: 50%; transform: translateX(-50%); background: var(--primary); color: white; border: none; padding: 15px 40px; border-radius: 30px; font-weight: bold; cursor: pointer; }
+        .header { background: var(--dark); color: white; padding: 10px 20px; display: none; justify-content: space-between; align-items: center; height: 60px; position: sticky; top: 0; z-index: 1000; }
 
-        /* 2. HEADER */
-        .header { background: var(--dark); color: white; padding: 10px 20px; display: none; justify-content: space-between; align-items: center; height: 60px; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .menu-btn { background: none; border: none; color: white; font-size: 1.8rem; cursor: pointer; }
-        .equity-badge { background: var(--gold); padding: 5px 12px; border-radius: 20px; font-weight: bold; font-size: 0.8rem; box-shadow: inset 0 0 5px rgba(0,0,0,0.2); }
+        /* PROGRESS BAR STYLES */
+        .progress-wrapper { margin-bottom: 20px; }
+        .progress-text { display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: bold; margin-bottom: 5px; color: var(--dark); }
+        .progress-outer { background: #dfe6e9; border-radius: 10px; height: 12px; width: 100%; overflow: hidden; border: 1px solid #d1d8e0; }
+        .progress-inner { background: var(--success); height: 100%; width: 0%; transition: width 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 0 10px rgba(46, 204, 113, 0.3); }
 
-        /* 3. SIDEBAR DRAWER */
-        .sidebar { position: fixed; left: -260px; top: 0; width: var(--sidebar-w); height: 100%; background: white; box-shadow: 5px 0 15px rgba(0,0,0,0.2); transition: 0.3s ease; z-index: 3000; padding-top: 20px; box-sizing: border-box; }
+        /* SIDEBAR */
+        .sidebar { position: fixed; left: -260px; top: 0; width: var(--sidebar-w); height: 100%; background: white; box-shadow: 5px 0 15px rgba(0,0,0,0.2); transition: 0.3s ease; z-index: 3000; padding-top: 20px; }
         .sidebar.open { left: 0; }
         .sidebar-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; z-index: 2500; }
         .sidebar-overlay.active { display: block; }
-        
-        .nav-link { display: block; padding: 15px 25px; color: var(--dark); text-decoration: none; font-weight: 600; cursor: pointer; border-bottom: 1px solid #eee; transition: 0.2s; }
-        .nav-link:hover { background: #f0f7ff; color: var(--primary); }
+        .nav-link { display: block; padding: 15px 25px; color: var(--dark); text-decoration: none; font-weight: 600; cursor: pointer; border-bottom: 1px solid #eee; }
 
-        /* 4. MAIN CONTENT AREA */
+        /* MAIN CONTENT */
         .main-content { padding: 20px; max-width: 600px; margin: 0 auto; display: none; }
         .view { display: none; }
-        .view.active { display: block !important; animation: fadeIn 0.3s; }
+        .view.active { display: block !important; }
+        .card { background: white; border-radius: 15px; padding: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+        .mission-text { background: #e8f4f8; padding: 20px; border-radius: 10px; border-left: 5px solid var(--primary); margin: 15px 0; font-style: italic; line-height: 1.6; }
+        textarea { width: 100%; height: 120px; margin-bottom: 15px; padding: 12px; box-sizing: border-box; border-radius: 10px; border: 1px solid #ccc; font-size: 1rem; resize: none; }
+        .btn-submit { background: var(--primary); color: white; border: none; width: 100%; padding: 15px; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 1rem; }
         
-        .card { background: white; border-radius: 12px; padding: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-top: 10px; }
-        .mission-text { background: #e8f4f8; padding: 20px; border-radius: 8px; border-left: 5px solid var(--primary); margin: 20px 0; font-style: italic; line-height: 1.5; }
-        textarea { width: 100%; height: 120px; margin-bottom: 15px; padding: 12px; box-sizing: border-box; border-radius: 8px; border: 1px solid #ccc; font-family: inherit; font-size: 1rem; }
-        .btn-submit { background: var(--primary); color: white; border: none; width: 100%; padding: 15px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 1rem; }
-        .btn-submit:disabled { background: #bdc3c7; cursor: not-allowed; }
-
-        /* 5. LEDGER STYLES */
-        .ledger-row { padding: 12px 0; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
-        .pts-gain { color: #27ae60; font-weight: bold; font-size: 0.9rem; }
-
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .ledger-row { padding: 15px 0; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+        .bonus-tag { color: var(--gold); font-size: 0.7rem; font-weight: bold; border: 1px solid var(--gold); padding: 2px 6px; border-radius: 4px; margin-left: 5px; }
     </style>
 </head>
 <body>
 
 <div id="welcome-view">
-    <h1 style="margin-bottom: 10px;">Hi! How are you?</h1>
-    <p style="opacity: 0.8; max-width: 300px;">Welcome to the Scribes Guild. Are you ready to start your mission?</p>
+    <h1>Welcome, Scribe.</h1>
+    <p>Complete 5 missions today to earn your 25pt Equity Bonus.</p>
     <button class="start-btn" onclick="enterApp()">I'm Ready</button>
 </div>
 
 <div class="sidebar-overlay" id="overlay" onclick="toggleSidebar()"></div>
 <div class="sidebar" id="sidebar">
-    <div style="padding: 20px; font-weight: bold; border-bottom: 2px solid var(--bg); color: var(--dark);">Scribes Menu</div>
+    <div style="padding: 20px; font-weight: bold; border-bottom: 1px solid #eee;">Scribes Menu</div>
     <div class="nav-link" onclick="switchView('mission')">🎯 Missions</div>
     <div class="nav-link" onclick="switchView('ledger')">📜 My Ledger</div>
-    <div style="padding: 20px 25px; font-size: 0.7rem; color: #999; text-transform: uppercase;">Sectors</div>
-    <div class="nav-link" onclick="changeSector('General', 0)" style="font-size: 0.85rem;">🌐 General</div>
-    <div class="nav-link" onclick="changeSector('Medical', 50)" style="font-size: 0.85rem;">🏥 Medical (Req: 50)</div>
+    <div style="padding: 20px 25px; font-size: 0.7rem; color: #999;">SECTORS</div>
+    <div class="nav-link" onclick="changeSector('General', 0)">🌐 General</div>
+    <div class="nav-link" onclick="changeSector('Medical', 50)">🏥 Medical (50+)</div>
 </div>
 
 <div class="header" id="app-header">
-    <button class="menu-btn" onclick="toggleSidebar()">☰</button>
-    <div id="user-rank" style="font-weight: bold; letter-spacing: 1px;">NOVICE</div>
-    <div class="equity-badge"><span id="equity-balance">0</span> pts</div>
+    <button onclick="toggleSidebar()" style="background:none; border:none; color:white; font-size:1.8rem; cursor:pointer;">☰</button>
+    <div style="font-weight: bold; color: var(--gold);"><span id="equity-balance">0</span> Equity</div>
 </div>
-
-<div class="main-content" id="main-content">
-    
-    <div id="mission-view" class="view active">
-        <div class="card" id="mission-card">
-            <h2 id="sector-title" style="margin-top:0; font-size: 1.2rem;">General Sector</h2>
-            <div class="mission-text">
-                "The municipal water repository will undergo prophylactic chlorination procedures to mitigate pathogenic proliferation."
-            </div>
-            <textarea id="submission-box" placeholder="Your human translation..."></textarea>
-            <button class="btn-submit" id="submit-btn" onclick="submitWork()">Submit to Ledger</button>
-            <p id="status-msg" style="text-align:center; font-weight:bold; margin-top:15px; font-size: 0.85rem;"></p>
-        </div>
-
-        <div class="card" id="lock-card" style="display:none; text-align:center; padding: 40px 20px;">
-            <div style="font-size: 3rem; margin-bottom: 10px;">🔒</div>
-            <h2 id="lock-title">Sector Locked</h2>
-            <p id="lock-msg" style="color:#666; font-size: 0.9rem; margin-bottom: 20px;"></p>
-            <button class="btn-submit" style="background:#7f8c8d" onclick="changeSector('General', 0)">Back to General</button>
-        </div>
-    </div>
-
-    <div id="ledger-view" class="view">
-        <div class="card">
-            <h2 style="margin-top:0; font-size: 1.2rem;">Contribution History</h2>
-            <div id="ledger-list">
-                </div>
-        </div>
-    </div>
-</div>
-
-<script>
-    // --- APP STATE ---
-    let equity = parseInt(localStorage.getItem('equityPoints') || 0);
-    let history = JSON.parse(localStorage.getItem('scribeHistory') || "[]");
-    let isPasted = false;
-
-    // --- INITIALIZATION ---
-    window.onload = () => {
-        updateStats();
-        document.getElementById('submission-box').addEventListener('paste', () => { isPasted = true; });
-    };
-
-    function enterApp() {
-        document.getElementById('welcome-view').style.display = 'none';
-        document.getElementById('app-header').style.display = 'flex';
-        document.getElementById('main-content').style.display = 'block';
-    }
-
-    // --- NAVIGATION ---
-    function toggleSidebar() {
-        document.getElementById('sidebar').classList.toggle('open');
-        document.getElementById('overlay').classList.toggle('active');
-    }
-
-    function switchView(viewId) {
-        document.getElementById('mission-view').classList.remove('active');
-        document.getElementById('ledger-view').classList.remove('active');
-        document.getElementById(viewId + '-view').classList.add('active');
-        if(viewId === 'ledger') renderLedger();
-        toggleSidebar();
-    }
-
-    function changeSector(name, req) {
-        if (equity < req) {
-            document.getElementById('mission-card').style.display = 'none';
-            document.getElementById('lock-card').style.display = 'block';
-            document.getElementById('lock-title').innerText = name + " Locked";
-            document.getElementById('lock-msg').innerText = `Your rank is insufficient. Earn ${req} Equity points to unlock this specialized sector.`;
-        } else {
-            document.getElementById('mission-card').style.display = 'block';
-            document.getElementById('lock-card').style.display = 'none';
-            document.getElementById('sector-title').innerText = name + " Sector";
-        }
-        switchView('mission');
-    }
-
-    // --- ENGINE ---
-    function updateStats() {
-        document.getElementById('equity-balance').innerText = equity;
-        let rank = "NOVICE";
-        if (equity >= 150) rank = "MASTER SCRIBE";
-        else if (equity >= 50) rank = "JOURNEYMAN";
-        document.getElementById('user-rank').innerText = rank;
-    }
-
-    function submitWork() {
-        const text = document.getElementById('submission-box').value.trim();
-        const status = document.getElementById('status-msg');
-        const isBypass = (text.toLowerCase() === 'skip');
-
-        if (!isBypass) {
-            if (isPasted) { status.style.color = "red"; status.innerText = "⚠️ Manual entry required."; return; }
-            if (text.length < 15) { status.style.color = "red"; status.innerText = "⚠️ Submission too short."; return; }
-        }
-
-        status.style.color = "var(--primary)";
-        status.innerText = "⏳ Recording to Ledger...";
-        document.getElementById('submit-btn').disabled = true;
-
-        const formURL = "https://docs.google.com/forms/d/e/1FAIpQLSc3kFyW7SM4cySwOCm8gfPnWDbW6XFJoXEJlrdqOlcwRzd6XA/formResponse";
-        const formData = new FormData();
-        formData.append("entry.337638736", isBypass ? "DEV_BYPASS" : "Human_User_01");
-        formData.append("entry.1381339047", text);
-
-        fetch(formURL, { method: "POST", mode: "no-cors", body: formData }).then(() => {
-            const reward = 10;
-            equity += reward;
-            localStorage.setItem('equityPoints', equity);
-            
-            history.unshift({
-                sector: document.getElementById('sector-title').innerText + (isBypass ? " (Test)" : ""),
-                date: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
-                pts: reward
-            });
-            localStorage.setItem('scribeHistory', JSON.stringify(history));
-
-            status.style.color = "var(--success)";
-            status.innerText = "✅ Equity Earned!";
-            document.getElementById('submission-box').value = "";
-            document.getElementById('submit-btn').disabled = false;
-            isPasted = false;
-            updateStats();
-        }).catch(() => {
-            status.innerText = "❌ Connection Error.";
-            document.getElementById('submit-btn').disabled = false;
-        });
-    }
-
-    function renderLedger() {
-        const list = document.getElementById('ledger-list');
-        if(history.length === 0) {
-            list.innerHTML = "<p style='text-align:center; padding:20px; color:#999;'>No history found.</p>";
-            return;
-        }
-        list.innerHTML = history.map(item => `
-            <div class="ledger-row">
-                <div>
-                    <strong>${item.sector}</strong><br>
-                    <small style="color:#888;">${item.date}</small>
-                </div>
-                <span class="pts-gain">+${item.pts} pts</span>
-            </div>`).join('');
-    }
-</script>
-
-</body>
-</html>
