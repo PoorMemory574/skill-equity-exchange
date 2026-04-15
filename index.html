@@ -3,115 +3,104 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scribes Guild | Master Test Build</title>
+    <title>Scribes Guild | Master Build</title>
     <style>
         :root { --primary: #3498db; --dark: #2c3e50; --gold: #f39c12; --bg: #f4f4f9; --success: #2ecc71; --sidebar-w: 260px; }
         body { font-family: -apple-system, system-ui, sans-serif; background: var(--bg); margin: 0; padding: 0; color: #333; overflow-x: hidden; }
-        
-        /* WELCOME PORTAL */
         #welcome-view { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--dark); color: white; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 5000; text-align: center; padding: 20px; box-sizing: border-box; }
-        .start-btn { position: absolute; bottom: 50px; left: 50%; transform: translateX(-50%); background: var(--primary); color: white; border: none; padding: 15px 40px; border-radius: 30px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
-
-        /* HEADER */
+        .start-btn { background: var(--primary); color: white; border: none; padding: 15px 40px; border-radius: 30px; font-weight: bold; cursor: pointer; margin-top: 20px; }
         .header { background: var(--dark); color: white; padding: 10px 20px; display: none; justify-content: space-between; align-items: center; height: 60px; position: sticky; top: 0; z-index: 1000; }
-        .menu-btn { background: #34495e; border: none; color: white; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; }
-
-        /* SIDEBAR NAVIGATION */
         .sidebar { position: fixed; left: -260px; top: 0; width: var(--sidebar-w); height: 100%; background: white; box-shadow: 5px 0 15px rgba(0,0,0,0.2); transition: 0.3s ease; z-index: 3000; padding-top: 20px; }
         .sidebar.open { left: 0 !important; }
         .sidebar-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; z-index: 2500; }
         .sidebar-overlay.active { display: block; }
         .nav-link { display: block; padding: 15px 25px; color: var(--dark); text-decoration: none; font-weight: 600; cursor: pointer; border-bottom: 1px solid #eee; }
-        .nav-link:hover { background: #f0f7ff; color: var(--primary); }
-
-        /* MAIN CONTENT */
         .main-content { padding: 20px; max-width: 600px; margin: 0 auto; display: none; }
         .view { display: none; }
         .view.active { display: block !important; }
         .card { background: white; border-radius: 15px; padding: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
-        
-        /* PROGRESS BAR */
         .progress-outer { background: #dfe6e9; border-radius: 10px; height: 10px; width: 100%; margin: 10px 0 20px; overflow: hidden; }
-        .progress-inner { background: var(--success); height: 100%; width: 0%; transition: width 0.5s cubic-bezier(0.1, 0.7, 1.0, 0.1); }
-
-        /* MISSION ELEMENTS */
-        .mission-text { background: #e8f4f8; padding: 20px; border-radius: 10px; border-left: 5px solid var(--primary); margin: 15px 0; font-style: italic; font-size: 0.95rem; line-height: 1.6; }
-        .hint-box { font-size: 0.8rem; color: #7f8c8d; background: #fff9db; padding: 12px; border-radius: 8px; margin-bottom: 15px; border: 1px dashed #f1c40f; }
-        
-        textarea { width: 100%; height: 100px; margin-bottom: 15px; padding: 12px; box-sizing: border-box; border-radius: 10px; border: 1px solid #ddd; font-size: 1rem; resize: none; font-family: inherit; }
-        .btn-submit { background: var(--primary); color: white; border: none; width: 100%; padding: 15px; border-radius: 10px; font-weight: bold; cursor: pointer; transition: 0.2s; }
-        .btn-submit:active { transform: scale(0.98); }
-        
-        .ledger-row { padding: 12px 0; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
-        .tag { font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; margin-left: 5px; font-weight: bold; text-transform: uppercase; }
-        .tag-bonus { background: var(--gold); color: white; }
+        .progress-inner { background: var(--success); height: 100%; width: 0%; transition: 0.5s; }
+        .mission-text { background: #e8f4f8; padding: 20px; border-radius: 10px; border-left: 5px solid var(--primary); margin: 15px 0; font-style: italic; }
+        textarea { width: 100%; height: 100px; margin-bottom: 15px; padding: 12px; box-sizing: border-box; border-radius: 10px; border: 1px solid #ddd; }
+        .btn-submit { background: var(--primary); color: white; border: none; width: 100%; padding: 15px; border-radius: 10px; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
 
 <div id="welcome-view">
-    <h1 style="margin-bottom:10px;">Hi! How are you?</h1>
-    <p style="opacity:0.8;">Ready to test the Infinite Mission Engine?</p>
+    <h1>Scribes Guild</h1>
+    <p>Welcome back. Ready to work?</p>
     <button class="start-btn" onclick="enterApp()">I'm Ready</button>
 </div>
 
 <div class="sidebar-overlay" id="overlay" onclick="toggleSidebar()"></div>
 <div class="sidebar" id="sidebar">
-    <div style="padding: 20px; font-weight: bold; border-bottom: 2px solid #f4f4f9;">Guild Control</div>
-    <div class="nav-link" onclick="switchView('mission')">🎯 Current Mission</div>
-    <div class="nav-link" onclick="switchView('ledger')">📜 My Ledger</div>
-    <div style="padding: 20px 25px; font-size: 0.7rem; color: #aaa; letter-spacing: 1px;">SECTORS</div>
-    <div class="nav-link" onclick="changeSector('General', 0)">🌐 General (Easy)</div>
-    <div class="nav-link" onclick="changeSector('Medical', 50)">🏥 Medical (Expert)</div>
-    <div class="nav-link" onclick="changeSector('Law', 100)">⚖️ Law (Expert)</div>
+    <div style="padding: 20px; font-weight: bold;">Menu</div>
+    <div class="nav-link" onclick="switchView('mission')">🎯 Mission</div>
+    <div class="nav-link" onclick="switchView('ledger')">📜 Ledger</div>
+    <div class="nav-link" onclick="changeSector('General', 0)">🌐 General</div>
+    <div class="nav-link" onclick="changeSector('Medical', 0)">🏥 Medical</div>
+    <div class="nav-link" onclick="changeSector('Law', 0)">⚖️ Law</div>
 </div>
 
 <div class="header" id="app-header">
-    <button class="menu-btn" onclick="toggleSidebar()">☰ MENU</button>
-    <div style="font-weight: bold; color: var(--gold);"><span id="equity-balance">0</span> pts</div>
+    <button onclick="toggleSidebar()" style="background:none; border:none; color:white; font-size:1.5rem;">☰</button>
+    <div><span id="equity-balance">0</span> pts</div>
 </div>
 
 <div class="main-content" id="main-content">
-    
     <div id="mission-view" class="view active">
         <div class="card">
-            <div style="display:flex; justify-content:space-between; font-size: 0.8rem; font-weight: bold;">
-                <span id="active-sector-name">General Sector</span>
-                <span id="daily-count">Progress: 0 / 5</span>
-            </div>
+            <div id="daily-count">Progress: 0 / 5</div>
             <div class="progress-outer"><div class="progress-inner" id="progress-bar"></div></div>
-
-            <div id="mission-workspace">
-                <div class="mission-text" id="mission-body">Initializing...</div>
-                <div class="hint-box"><strong>💡 PRO TIP:</strong> <span id="mission-hint">Use your own words to explain the text.</span></div>
-                <textarea id="submission-box" placeholder="Type your translation here..."></textarea>
-                <button class="btn-submit" onclick="submitWork()">Submit Submission</button>
-                <p id="status-msg" style="text-align:center; font-weight:bold; margin-top:10px; font-size: 0.85rem;"></p>
-            </div>
+            <div class="mission-text" id="mission-body">Select a sector to begin.</div>
+            <textarea id="submission-box" placeholder="Your work..."></textarea>
+            <button class="btn-submit" onclick="submitWork()">Submit</button>
         </div>
     </div>
-
     <div id="ledger-view" class="view">
-        <div class="card">
-            <h2 style="margin-top:0;">Your History</h2>
-            <div id="ledger-list"></div>
-        </div>
+        <div class="card" id="ledger-list">History is empty.</div>
     </div>
 </div>
 
 <script>
-    // --- COMPREHENSIVE QUESTION LIBRARIES ---
-    const missionLibrary = {
-        'General': [
-            { t: "The local grocery store is having a sale on fresh fruit this weekend.", h: "Focus on where and what is happening." },
-            { t: "Please remember to turn off the lights when you leave the room.", h: "Translate this as a helpful reminder." },
-            { t: "The train was delayed by ten minutes due to heavy rain.", h: "Explain why the train is late." },
-            { t: "Learning a new language opens up many career opportunities.", h: "Focus on the benefits mentioned." }
-        ],
-        'Medical': [
-            { t: "The patient is experiencing acute episodes of tachycardia.", h: "Tachycardia refers to a rapid heart rate." },
-            { t: "Apply a topical analgesic to the affected area three times daily.", h: "Analgesic means pain-reliever." },
-            { t: "The MRI scan showed no abnormalities in the cerebral cortex.", h: "Focus on the results of the brain scan." }
-        ],
-        'Law': [
-            { t: "The contract shall be governed by the laws of the State
+    // --- APP LOGIC ---
+    function enterApp() {
+        console.log("Entering App...");
+        document.getElementById('welcome-view').style.display = 'none';
+        document.getElementById('app-header').style.display = 'flex';
+        document.getElementById('main-content').style.display = 'block';
+    }
+
+    function toggleSidebar() {
+        document.getElementById('sidebar').classList.toggle('open');
+        document.getElementById('overlay').classList.toggle('active');
+    }
+
+    function switchView(v) {
+        document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+        document.getElementById(v + '-view').classList.add('active');
+        toggleSidebar();
+    }
+
+    let equity = 0;
+    let dailyDone = 0;
+
+    function submitWork() {
+        dailyDone++;
+        equity += (dailyDone % 5 === 0) ? 35 : 10;
+        document.getElementById('equity-balance').innerText = equity;
+        document.getElementById('daily-count').innerText = `Progress: ${dailyDone} / 5`;
+        document.getElementById('progress-bar').style.width = (Math.min(dailyDone, 5) / 5 * 100) + "%";
+        document.getElementById('submission-box').value = "";
+        alert("Points added!");
+    }
+
+    function changeSector(s) {
+        document.getElementById('mission-body').innerText = `Target [${s}]: Translate the technical parameters.`;
+        switchView('mission');
+    }
+</script>
+</body>
+</html>
