@@ -3,126 +3,148 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scribes Guild | S.E.E.</title>
+    <title>Scribes Guild | S.E.E. Master</title>
     <style>
         :root { --primary: #3498db; --dark: #2c3e50; --gold: #f39c12; --bg: #f4f4f9; --success: #2ecc71; --sidebar-w: 260px; }
-        body { font-family: -apple-system, system-ui, sans-serif; background: var(--bg); margin: 0; padding: 0; color: #333; }
+        body { font-family: -apple-system, system-ui, sans-serif; background: var(--bg); margin: 0; padding: 0; color: #333; overflow-x: hidden; }
         
-        /* WELCOME & HEADER */
-        #welcome-view { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--dark); color: white; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 5000; text-align: center; padding: 20px; box-sizing: border-box; }
-        .start-btn { position: absolute; bottom: 50px; left: 50%; transform: translateX(-50%); background: var(--primary); color: white; border: none; padding: 15px 40px; border-radius: 30px; font-weight: bold; cursor: pointer; }
+        /* 1. WELCOME PORTAL */
+        #welcome-view { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: var(--dark); color: white; display: flex; 
+            flex-direction: column; justify-content: center; align-items: center; 
+            z-index: 5000; text-align: center; padding: 20px; box-sizing: border-box;
+        }
+        .start-btn { 
+            position: absolute; bottom: 50px; left: 50%; transform: translateX(-50%);
+            background: var(--primary); color: white; border: none; padding: 15px 40px; 
+            border-radius: 30px; font-weight: bold; font-size: 1.1rem; cursor: pointer; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3); transition: 0.2s;
+        }
+
+        /* 2. APP HEADER */
         .header { background: var(--dark); color: white; padding: 10px 20px; display: none; justify-content: space-between; align-items: center; height: 60px; position: sticky; top: 0; z-index: 1000; }
+        .menu-btn { background: none; border: none; color: white; font-size: 1.8rem; cursor: pointer; }
+        .equity-display { font-weight: bold; color: var(--gold); background: rgba(255,255,255,0.1); padding: 5px 12px; border-radius: 20px; font-size: 0.9rem; }
 
-        /* PROGRESS BAR STYLES */
-        .progress-wrapper { margin-bottom: 20px; }
-        .progress-text { display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: bold; margin-bottom: 5px; color: var(--dark); }
-        .progress-outer { background: #dfe6e9; border-radius: 10px; height: 12px; width: 100%; overflow: hidden; border: 1px solid #d1d8e0; }
-        .progress-inner { background: var(--success); height: 100%; width: 0%; transition: width 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 0 10px rgba(46, 204, 113, 0.3); }
-
-        /* SIDEBAR */
+        /* 3. SIDEBAR */
         .sidebar { position: fixed; left: -260px; top: 0; width: var(--sidebar-w); height: 100%; background: white; box-shadow: 5px 0 15px rgba(0,0,0,0.2); transition: 0.3s ease; z-index: 3000; padding-top: 20px; }
         .sidebar.open { left: 0; }
         .sidebar-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; z-index: 2500; }
         .sidebar-overlay.active { display: block; }
         .nav-link { display: block; padding: 15px 25px; color: var(--dark); text-decoration: none; font-weight: 600; cursor: pointer; border-bottom: 1px solid #eee; }
 
-        /* MAIN CONTENT */
+        /* 4. PROGRESS BAR */
+        .progress-wrapper { margin-bottom: 20px; }
+        .progress-text { display: flex; justify-content: space-between; font-size: 0.75rem; font-weight: bold; margin-bottom: 6px; color: var(--dark); }
+        .progress-outer { background: #dfe6e9; border-radius: 10px; height: 10px; width: 100%; overflow: hidden; }
+        .progress-inner { background: var(--success); height: 100%; width: 0%; transition: width 0.7s ease-in-out; }
+
+        /* 5. MAIN CONTENT */
         .main-content { padding: 20px; max-width: 600px; margin: 0 auto; display: none; }
         .view { display: none; }
-        .view.active { display: block !important; }
-        .card { background: white; border-radius: 15px; padding: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
-        .mission-text { background: #e8f4f8; padding: 20px; border-radius: 10px; border-left: 5px solid var(--primary); margin: 15px 0; font-style: italic; line-height: 1.6; }
-        textarea { width: 100%; height: 120px; margin-bottom: 15px; padding: 12px; box-sizing: border-box; border-radius: 10px; border: 1px solid #ccc; font-size: 1rem; resize: none; }
+        .view.active { display: block !important; animation: fadeIn 0.4s; }
+        .card { background: white; border-radius: 15px; padding: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
+        
+        .mission-text { background: #e8f4f8; padding: 20px; border-radius: 10px; border-left: 5px solid var(--primary); margin: 15px 0; font-style: italic; font-size: 0.95rem; line-height: 1.6; }
+        textarea { width: 100%; height: 120px; margin-bottom: 15px; padding: 12px; box-sizing: border-box; border-radius: 10px; border: 1px solid #ddd; font-size: 1rem; resize: none; font-family: inherit; }
         .btn-submit { background: var(--primary); color: white; border: none; width: 100%; padding: 15px; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 1rem; }
         
+        /* LEDGER */
         .ledger-row { padding: 15px 0; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
-        .bonus-tag { color: var(--gold); font-size: 0.7rem; font-weight: bold; border: 1px solid var(--gold); padding: 2px 6px; border-radius: 4px; margin-left: 5px; }
+        .bonus-badge { background: var(--gold); color: white; font-size: 0.6rem; padding: 2px 6px; border-radius: 4px; font-weight: bold; margin-left: 5px; vertical-align: middle; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
 <div id="welcome-view">
-    <h1>Welcome, Scribe.</h1>
-    <p>Complete 5 missions today to earn your 25pt Equity Bonus.</p>
+    <h1 style="margin-bottom: 10px;">Hi! How are you?</h1>
+    <p style="opacity: 0.8; max-width: 280px; line-height: 1.4;">Ready to start your daily missions and claim your bonus?</p>
     <button class="start-btn" onclick="enterApp()">I'm Ready</button>
 </div>
 
 <div class="sidebar-overlay" id="overlay" onclick="toggleSidebar()"></div>
 <div class="sidebar" id="sidebar">
-    <div style="padding: 20px; font-weight: bold; border-bottom: 1px solid #eee;">Scribes Menu</div>
+    <div style="padding: 20px; font-weight: bold; border-bottom: 2px solid var(--bg);">Guild Menu</div>
     <div class="nav-link" onclick="switchView('mission')">🎯 Missions</div>
     <div class="nav-link" onclick="switchView('ledger')">📜 My Ledger</div>
-    <div style="padding: 20px 25px; font-size: 0.7rem; color: #999;">SECTORS</div>
-    <div class="nav-link" onclick="changeSector('General', 0)">🌐 General</div>
-    <div class="nav-link" onclick="changeSector('Medical', 50)">🏥 Medical (50+)</div>
+    <div style="padding: 20px 25px; font-size: 0.7rem; color: #aaa; text-transform: uppercase; letter-spacing: 1px;">Sectors</div>
+    <div class="nav-link" onclick="changeSector('General', 0)" style="font-size: 0.9rem;">🌐 General</div>
+    <div class="nav-link" onclick="changeSector('Medical', 50)" style="font-size: 0.9rem;">🏥 Medical (50+)</div>
 </div>
 
 <div class="header" id="app-header">
-    <button onclick="toggleSidebar()" style="background:none; border:none; color:white; font-size:1.8rem; cursor:pointer;">☰</button>
-    <div style="font-weight: bold; color: var(--gold);"><span id="equity-balance">0</span> Equity</div>
+    <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+    <div id="user-rank" style="font-weight: bold; font-size: 0.8rem; opacity: 0.7;">NOVICE</div>
+    <div class="equity-display"><span id="equity-balance">0</span> pts</div>
 </div>
 
 <div class="main-content" id="main-content">
+    
     <div id="mission-view" class="view active">
         <div class="card">
             <div class="progress-wrapper">
                 <div class="progress-text">
-                    <span>Daily Progress</span>
+                    <span>Daily Goal</span>
                     <span id="daily-count">0 / 5</span>
                 </div>
-                <div class="progress-outer">
-                    <div class="progress-inner" id="progress-bar"></div>
-                </div>
+                <div class="progress-outer"><div class="progress-inner" id="progress-bar"></div></div>
             </div>
 
             <div id="mission-workspace">
-                <h3 id="sector-title" style="margin:0;">General Sector</h3>
-                <div class="mission-text" id="mission-body">Loading...</div>
+                <h3 id="sector-title" style="margin-top:0;">General Sector</h3>
+                <div class="mission-text" id="mission-body">Loading your task...</div>
                 <textarea id="submission-box" placeholder="Your human translation..."></textarea>
-                <button class="btn-submit" id="submit-btn" onclick="submitWork()">Submit Submission</button>
-                <p id="status-msg" style="text-align:center; font-weight:bold; margin-top:15px;"></p>
+                <button class="btn-submit" id="submit-btn" onclick="submitWork()">Submit to Ledger</button>
+                <p id="status-msg" style="text-align:center; font-weight:bold; margin-top:15px; font-size: 0.85rem;"></p>
             </div>
 
-            <div id="daily-complete" style="display:none; text-align:center; padding: 30px 10px;">
-                <h2 style="color:var(--success)">🌟 Goal Achieved!</h2>
-                <p>You've completed your daily quota. An extra 25 Equity points have been added to your ledger.</p>
-                <button class="btn-submit" onclick="switchView('ledger')" style="background:var(--dark)">View History</button>
+            <div id="daily-complete" style="display:none; text-align:center; padding: 20px 0;">
+                <h2 style="color:var(--success); margin-bottom: 10px;">🌟 Daily Limit Reached</h2>
+                <p style="color: #666; font-size: 0.9rem;">You've earned your 25pt bonus. Come back tomorrow for new missions!</p>
+                <button class="btn-submit" onclick="switchView('ledger')" style="background:var(--dark); margin-top: 15px;">Check Your Ledger</button>
             </div>
         </div>
     </div>
 
     <div id="ledger-view" class="view">
         <div class="card">
-            <h2 style="margin-top:0;">Your Ledger</h2>
+            <h2 style="margin-top:0; font-size: 1.2rem;">Contribution Ledger</h2>
             <div id="ledger-list"></div>
         </div>
     </div>
+
 </div>
 
 <script>
+    // --- LIBRARIES ---
     const missionLibrary = {
         'General': [
-            "The municipal water repository will undergo prophylactic chlorination.",
+            "The municipal water repository will undergo prophylactic chlorination procedures.",
             "Initial observations indicate a significant deficit in quarterly fiscal projections.",
             "Please facilitate the redistribution of internal logistical resources immediately.",
-            "The aerodynamic properties of the prototype were evaluated via wind tunnel simulation.",
+            "Aerodynamic properties were evaluated via wind tunnel simulation of the prototype.",
             "Commence the systematic digitization of all analog archival documentation."
         ],
         'Medical': [
             "The patient presents with acute idiopathic inflammation in the upper extremities.",
             "Administer 500mg of paracetamol intravenously every six hours post-op.",
-            "Magnetic Resonance Imaging confirmed a laceration to the anterior cruciate ligament.",
+            "Magnetic Resonance Imaging confirmed a minor laceration to the ACL.",
             "The prophylactic efficacy of the vaccine was measured over a twelve-month period.",
             "Elevated levels of glucose were detected during the routine phlebotomy procedure."
         ]
     };
 
+    // --- STATE ---
     let currentSector = 'General';
     let equity = parseInt(localStorage.getItem('equityPoints') || 0);
     let history = JSON.parse(localStorage.getItem('scribeHistory') || "[]");
     let dailyDone = parseInt(localStorage.getItem('dailyDone') || 0);
+    let isPasted = false;
 
-    // DAILY RESET LOGIC
+    // Daily Reset Logic
     const today = new Date().toLocaleDateString();
     if (localStorage.getItem('lastDate') !== today) {
         dailyDone = 0;
@@ -130,76 +152,17 @@
         localStorage.setItem('lastDate', today);
     }
 
+    // --- INIT ---
+    window.onload = () => {
+        updateStats();
+        document.getElementById('submission-box').addEventListener('paste', () => isPasted = true);
+    };
+
     function enterApp() {
         document.getElementById('welcome-view').style.display = 'none';
         document.getElementById('app-header').style.display = 'flex';
         document.getElementById('main-content').style.display = 'block';
-        updateUI();
         loadNewMission();
-    }
-
-    function updateUI() {
-        document.getElementById('equity-balance').innerText = equity;
-        document.getElementById('daily-count').innerText = `${dailyDone} / 5`;
-        
-        // Update Progress Bar
-        const percent = Math.min((dailyDone / 5) * 100, 100);
-        document.getElementById('progress-bar').style.width = percent + "%";
-        
-        if (dailyDone >= 5) {
-            document.getElementById('mission-workspace').style.display = 'none';
-            document.getElementById('daily-complete').style.display = 'block';
-        }
-    }
-
-    function loadNewMission() {
-        const pool = missionLibrary[currentSector];
-        const randomText = pool[Math.floor(Math.random() * pool.length)];
-        document.getElementById('mission-body').innerText = randomText;
-    }
-
-    function submitWork() {
-        const text = document.getElementById('submission-box').value.trim();
-        const status = document.getElementById('status-msg');
-        if (!text) return;
-
-        const isBypass = (text.toLowerCase() === 'skip');
-        if (!isBypass && text.length < 15) { alert("Please provide a more detailed translation."); return; }
-
-        let pointsAwarded = 10;
-        dailyDone++;
-
-        if (dailyDone === 5) {
-            pointsAwarded += 25; // THE BONUS
-        }
-
-        equity += pointsAwarded;
-        localStorage.setItem('equityPoints', equity);
-        localStorage.setItem('dailyDone', dailyDone);
-
-        history.unshift({
-            sector: currentSector + (isBypass ? " (Dev)" : ""),
-            pts: pointsAwarded,
-            date: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
-            isBonus: (dailyDone === 5)
-        });
-        localStorage.setItem('scribeHistory', JSON.stringify(history));
-
-        document.getElementById('submission-box').value = "";
-        updateUI();
-        if (dailyDone < 5) loadNewMission();
-        
-        status.style.color = "var(--success)";
-        status.innerText = `✅ +${pointsAwarded} Equity Recorded!`;
-        setTimeout(() => { status.innerText = ""; }, 3000);
-    }
-
-    function switchView(v) {
-        document.getElementById('mission-view').classList.remove('active');
-        document.getElementById('ledger-view').classList.remove('active');
-        document.getElementById(v + '-view').classList.add('active');
-        if(v === 'ledger') renderLedger();
-        if(document.getElementById('sidebar').classList.contains('open')) toggleSidebar();
     }
 
     function toggleSidebar() {
@@ -207,12 +170,76 @@
         document.getElementById('overlay').classList.toggle('active');
     }
 
+    function switchView(viewId) {
+        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+        document.getElementById(viewId + '-view').classList.add('active');
+        if(viewId === 'ledger') renderLedger();
+        if(document.getElementById('sidebar').classList.contains('open')) toggleSidebar();
+    }
+
     function changeSector(name, req) {
-        if(equity < req) { alert("Access Denied: 50+ Equity required."); return; }
+        if (equity < req) { alert(`Locked! You need ${req} pts.`); return; }
         currentSector = name;
         document.getElementById('sector-title').innerText = name + " Sector";
         loadNewMission();
         switchView('mission');
+    }
+
+    function loadNewMission() {
+        const pool = missionLibrary[currentSector];
+        document.getElementById('mission-body').innerText = pool[Math.floor(Math.random() * pool.length)];
+    }
+
+    function updateStats() {
+        document.getElementById('equity-balance').innerText = equity;
+        document.getElementById('daily-count').innerText = `${dailyDone} / 5`;
+        document.getElementById('progress-bar').style.width = (Math.min(dailyDone, 5) / 5 * 100) + "%";
+        
+        let rank = "NOVICE";
+        if (equity >= 150) rank = "MASTER SCRIBE";
+        else if (equity >= 50) rank = "JOURNEYMAN";
+        document.getElementById('user-rank').innerText = rank;
+
+        if (dailyDone >= 5) {
+            document.getElementById('mission-workspace').style.display = 'none';
+            document.getElementById('daily-complete').style.display = 'block';
+        }
+    }
+
+    function submitWork() {
+        const text = document.getElementById('submission-box').value.trim();
+        const status = document.getElementById('status-msg');
+        const isBypass = (text.toLowerCase() === 'skip');
+
+        if (!isBypass) {
+            if (isPasted) { status.style.color = "#e74c3c"; status.innerText = "⚠️ Manual entry only."; return; }
+            if (text.length < 15) { status.style.color = "#e74c3c"; status.innerText = "⚠️ Elaborate further."; return; }
+        }
+
+        let reward = 10;
+        dailyDone++;
+        if (dailyDone === 5) reward += 25; // Bonus
+
+        equity += reward;
+        localStorage.setItem('equityPoints', equity);
+        localStorage.setItem('dailyDone', dailyDone);
+
+        history.unshift({
+            sector: currentSector + (isBypass ? " (Test)" : ""),
+            pts: reward,
+            date: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+            bonus: (dailyDone === 5)
+        });
+        localStorage.setItem('scribeHistory', JSON.stringify(history));
+
+        status.style.color = "var(--success)";
+        status.innerText = `✅ +${reward} Pts Recorded!`;
+        document.getElementById('submission-box').value = "";
+        isPasted = false;
+        
+        updateStats();
+        if (dailyDone < 5) loadNewMission();
+        setTimeout(() => status.innerText = "", 3000);
     }
 
     function renderLedger() {
@@ -220,15 +247,13 @@
         list.innerHTML = history.length ? history.map(h => `
             <div class="ledger-row">
                 <div>
-                    <strong>${h.sector}</strong>
-                    ${h.isBonus ? '<span class="bonus-tag">DAILY BONUS</span>' : ''}
-                    <br><small style="color:#888;">${h.date}</small>
+                    <strong>${h.sector}</strong>${h.bonus ? '<span class="bonus-badge">BONUS</span>' : ''}<br>
+                    <small style="color:#999;">${h.date}</small>
                 </div>
                 <span style="color:var(--success); font-weight:bold;">+${h.pts}</span>
-            </div>`).join('') : "No activity yet.";
+            </div>`).join('') : "<p style='text-align:center; color:#999; padding:20px;'>Empty Ledger.</p>";
     }
-
-    updateUI();
 </script>
+
 </body>
 </html>
