@@ -7,70 +7,129 @@
     <style>
         :root { --primary: #3498db; --dark: #2c3e50; --gold: #f39c12; --bg: #f4f4f9; --success: #2ecc71; --sidebar-w: 260px; }
         body { font-family: -apple-system, system-ui, sans-serif; background: var(--bg); margin: 0; padding: 0; color: #333; overflow-x: hidden; }
+        
+        /* WELCOME PORTAL */
         #welcome-view { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--dark); color: white; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 5000; text-align: center; padding: 20px; box-sizing: border-box; }
-        .start-btn { background: var(--primary); color: white; border: none; padding: 15px 40px; border-radius: 30px; font-weight: bold; cursor: pointer; margin-top: 20px; }
+        .start-btn { background: var(--primary); color: white; border: none; padding: 15px 40px; border-radius: 30px; font-weight: bold; cursor: pointer; margin-top: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+
+        /* HEADER */
         .header { background: var(--dark); color: white; padding: 10px 20px; display: none; justify-content: space-between; align-items: center; height: 60px; position: sticky; top: 0; z-index: 1000; }
+        .menu-btn { background: #34495e; border: none; color: white; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+
+        /* SIDEBAR NAVIGATION */
         .sidebar { position: fixed; left: -260px; top: 0; width: var(--sidebar-w); height: 100%; background: white; box-shadow: 5px 0 15px rgba(0,0,0,0.2); transition: 0.3s ease; z-index: 3000; padding-top: 20px; }
         .sidebar.open { left: 0 !important; }
         .sidebar-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; z-index: 2500; }
         .sidebar-overlay.active { display: block; }
-        .nav-link { display: block; padding: 15px 25px; color: var(--dark); text-decoration: none; font-weight: 600; cursor: pointer; border-bottom: 1px solid #eee; }
+        
+        .sidebar-title { padding: 15px 25px 5px; font-size: 0.75rem; color: #aaa; text-transform: uppercase; letter-spacing: 1px; font-weight: bold; }
+        .nav-link { display: block; padding: 12px 25px; color: var(--dark); text-decoration: none; font-weight: 600; cursor: pointer; border-left: 4px solid transparent; }
+        .nav-link:hover { background: #f0f7ff; color: var(--primary); border-left-color: var(--primary); }
+
+        /* MAIN CONTENT */
         .main-content { padding: 20px; max-width: 600px; margin: 0 auto; display: none; }
         .view { display: none; }
         .view.active { display: block !important; }
-        .card { background: white; border-radius: 15px; padding: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
+        .card { background: white; border-radius: 15px; padding: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); position: relative; }
+        
+        /* PROGRESS BAR */
         .progress-outer { background: #dfe6e9; border-radius: 10px; height: 10px; width: 100%; margin: 10px 0 20px; overflow: hidden; }
-        .progress-inner { background: var(--success); height: 100%; width: 0%; transition: 0.5s; }
-        .mission-text { background: #e8f4f8; padding: 20px; border-radius: 10px; border-left: 5px solid var(--primary); margin: 15px 0; font-style: italic; }
-        textarea { width: 100%; height: 100px; margin-bottom: 15px; padding: 12px; box-sizing: border-box; border-radius: 10px; border: 1px solid #ddd; }
+        .progress-inner { background: var(--success); height: 100%; width: 0%; transition: width 0.5s ease; }
+
+        /* MISSION ELEMENTS */
+        .mission-text { background: #e8f4f8; padding: 20px; border-radius: 10px; border-left: 5px solid var(--primary); margin: 15px 0; font-style: italic; line-height: 1.6; }
+        .hint-box { font-size: 0.85rem; color: #7f8c8d; background: #fff9db; padding: 12px; border-radius: 8px; margin-bottom: 15px; border: 1px dashed #f1c40f; }
+        
+        textarea { width: 100%; height: 100px; margin-bottom: 15px; padding: 12px; box-sizing: border-box; border-radius: 10px; border: 1px solid #ddd; font-size: 1rem; resize: none; font-family: inherit; }
         .btn-submit { background: var(--primary); color: white; border: none; width: 100%; padding: 15px; border-radius: 10px; font-weight: bold; cursor: pointer; }
+        
+        /* SUCCESS TOAST */
+        #success-toast { display: none; position: absolute; top: 10px; left: 50%; transform: translateX(-50%); background: var(--success); color: white; padding: 8px 20px; border-radius: 20px; font-weight: bold; z-index: 10; animation: slideDown 0.3s forwards; }
+
+        /* LEDGER */
+        .ledger-row { padding: 12px 0; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+
+        @keyframes slideDown { from { top: -20px; opacity: 0; } to { top: 10px; opacity: 1; } }
     </style>
 </head>
 <body>
 
 <div id="welcome-view">
-    <h1>Scribes Guild</h1>
-    <p>Welcome back. Ready to work?</p>
+    <h1 style="margin-bottom:10px;">Hi! How are you?</h1>
     <button class="start-btn" onclick="enterApp()">I'm Ready</button>
 </div>
 
 <div class="sidebar-overlay" id="overlay" onclick="toggleSidebar()"></div>
+
 <div class="sidebar" id="sidebar">
-    <div style="padding: 20px; font-weight: bold;">Menu</div>
-    <div class="nav-link" onclick="switchView('mission')">🎯 Mission</div>
-    <div class="nav-link" onclick="switchView('ledger')">📜 Ledger</div>
-    <div class="nav-link" onclick="changeSector('General', 0)">🌐 General</div>
-    <div class="nav-link" onclick="changeSector('Medical', 0)">🏥 Medical</div>
-    <div class="nav-link" onclick="changeSector('Law', 0)">⚖️ Law</div>
+    <div class="sidebar-title">Main Menu</div>
+    <div class="nav-link" onclick="switchView('mission')">🎯 Current Mission</div>
+    <div class="nav-link" onclick="switchView('ledger')">📜 My Ledger</div>
+    
+    <div class="sidebar-title">Sectors</div>
+    <div class="nav-link" onclick="changeSector('General', 0)">🌐 General (0 pts)</div>
+    <div class="nav-link" onclick="changeSector('Medical', 50)">🏥 Medical (50 pts)</div>
+    <div class="nav-link" onclick="changeSector('Law', 100)">⚖️ Law (100 pts)</div>
 </div>
 
 <div class="header" id="app-header">
-    <button onclick="toggleSidebar()" style="background:none; border:none; color:white; font-size:1.5rem;">☰</button>
-    <div><span id="equity-balance">0</span> pts</div>
+    <button class="menu-btn" onclick="toggleSidebar()">☰ MENU</button>
+    <div style="font-weight: bold; color: var(--gold);"><span id="equity-balance">0</span> pts</div>
 </div>
 
 <div class="main-content" id="main-content">
     <div id="mission-view" class="view active">
         <div class="card">
-            <div id="daily-count">Progress: 0 / 5</div>
+            <div id="success-toast">Successful!</div>
+            <div style="display:flex; justify-content:space-between; font-size: 0.8rem; font-weight: bold;">
+                <span id="active-sector-name">General Sector</span>
+                <span id="daily-count">Daily Progress: 0 / 5</span>
+            </div>
             <div class="progress-outer"><div class="progress-inner" id="progress-bar"></div></div>
+
             <div class="mission-text" id="mission-body">Select a sector to begin.</div>
-            <textarea id="submission-box" placeholder="Your work..."></textarea>
-            <button class="btn-submit" onclick="submitWork()">Submit</button>
+            <div class="hint-box"><strong>💡 Hint:</strong> <span id="mission-hint">Follow the sector instructions carefully.</span></div>
+            
+            <textarea id="submission-box" placeholder="Your translation..."></textarea>
+            <button class="btn-submit" onclick="submitWork()">Submit Submission</button>
         </div>
     </div>
+
     <div id="ledger-view" class="view">
-        <div class="card" id="ledger-list">History is empty.</div>
+        <div class="card">
+            <h2 style="margin-top:0;">Contribution Ledger</h2>
+            <div id="ledger-list"></div>
+        </div>
     </div>
 </div>
 
 <script>
-    // --- APP LOGIC ---
+    const missionLibrary = {
+        'General': [
+            { t: "The local park is beautiful during the spring months.", h: "Keep the translation simple and pleasant." },
+            { t: "Please arrive ten minutes early for your appointment.", h: "Focus on the time requirement." }
+        ],
+        'Medical': [
+            { t: "The patient requires a subcutaneous injection of insulin.", h: "Subcutaneous means 'under the skin'." },
+            { t: "The prognosis for the recovery is optimistic following surgery.", h: "Prognosis means 'likely outcome'." }
+        ],
+        'Law': [
+            { t: "The clause stipulates a mandatory arbitration period.", h: "Stipulates means 'specifically requires'." },
+            { t: "He was subpoenaed to testify before the grand jury.", h: "A subpoena is a court order to appear." }
+        ]
+    };
+
+    let currentSector = 'General';
+    let equity = parseInt(localStorage.getItem('equityPoints') || 0);
+    let dailyDone = parseInt(localStorage.getItem('dailyDone') || 0);
+    let history = JSON.parse(localStorage.getItem('scribeHistory') || "[]");
+
     function enterApp() {
-        console.log("Entering App...");
         document.getElementById('welcome-view').style.display = 'none';
         document.getElementById('app-header').style.display = 'flex';
         document.getElementById('main-content').style.display = 'block';
+        updateUI();
+        loadNewMission();
     }
 
     function toggleSidebar() {
@@ -78,29 +137,76 @@
         document.getElementById('overlay').classList.toggle('active');
     }
 
-    function switchView(v) {
-        document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
-        document.getElementById(v + '-view').classList.add('active');
-        toggleSidebar();
+    function switchView(viewId) {
+        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+        document.getElementById(viewId + '-view').classList.add('active');
+        if(viewId === 'ledger') renderLedger();
+        if(document.getElementById('sidebar').classList.contains('open')) toggleSidebar();
     }
 
-    let equity = 0;
-    let dailyDone = 0;
-
-    function submitWork() {
-        dailyDone++;
-        equity += (dailyDone % 5 === 0) ? 35 : 10;
-        document.getElementById('equity-balance').innerText = equity;
-        document.getElementById('daily-count').innerText = `Progress: ${dailyDone} / 5`;
-        document.getElementById('progress-bar').style.width = (Math.min(dailyDone, 5) / 5 * 100) + "%";
-        document.getElementById('submission-box').value = "";
-        alert("Points added!");
-    }
-
-    function changeSector(s) {
-        document.getElementById('mission-body').innerText = `Target [${s}]: Translate the technical parameters.`;
+    function changeSector(name, req) {
+        if (equity < req) {
+            showToast(`Locked! Need ${req} pts`, "#e74c3c");
+            return;
+        }
+        currentSector = name;
+        document.getElementById('active-sector-name').innerText = name + " Sector";
+        loadNewMission();
         switchView('mission');
     }
+
+    function loadNewMission() {
+        const pool = missionLibrary[currentSector];
+        const item = pool[Math.floor(Math.random() * pool.length)];
+        document.getElementById('mission-body').innerText = item.t;
+        document.getElementById('mission-hint').innerText = item.h;
+    }
+
+    function updateUI() {
+        document.getElementById('equity-balance').innerText = equity;
+        document.getElementById('daily-count').innerText = `Daily Progress: ${dailyDone} / 5`;
+        document.getElementById('progress-bar').style.width = (Math.min(dailyDone, 5) / 5 * 100) + "%";
+    }
+
+    function submitWork() {
+        const text = document.getElementById('submission-box').value.trim();
+        if (!text) return;
+
+        let reward = 10;
+        dailyDone++;
+        if (dailyDone % 5 === 0) reward += 25;
+
+        equity += reward;
+        localStorage.setItem('equityPoints', equity);
+        localStorage.setItem('dailyDone', dailyDone);
+
+        history.unshift({ sector: currentSector, pts: reward, date: new Date().toLocaleTimeString() });
+        localStorage.setItem('scribeHistory', JSON.stringify(history));
+
+        document.getElementById('submission-box').value = "";
+        updateUI();
+        loadNewMission();
+        showToast("Successful!");
+    }
+
+    function showToast(msg, color = "var(--success)") {
+        const toast = document.getElementById('success-toast');
+        toast.innerText = msg;
+        toast.style.background = color;
+        toast.style.display = 'block';
+        setTimeout(() => { toast.style.display = 'none'; }, 2000);
+    }
+
+    function renderLedger() {
+        const list = document.getElementById('ledger-list');
+        list.innerHTML = history.length ? history.map(h => `
+            <div class="ledger-row">
+                <span>${h.sector}</span>
+                <strong style="color:var(--success)">+${h.pts}</strong>
+            </div>`).join('') : "No submissions yet.";
+    }
+
+    updateUI();
 </script>
 </body>
 </html>
