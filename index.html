@@ -3,200 +3,115 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scribes Guild | S.E.E. V4.3</title>
+    <title>Scribes Guild | Master Test Build</title>
     <style>
         :root { --primary: #3498db; --dark: #2c3e50; --gold: #f39c12; --bg: #f4f4f9; --success: #2ecc71; --sidebar-w: 260px; }
         body { font-family: -apple-system, system-ui, sans-serif; background: var(--bg); margin: 0; padding: 0; color: #333; overflow-x: hidden; }
         
-        /* 1. WELCOME PORTAL */
+        /* WELCOME PORTAL */
         #welcome-view { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--dark); color: white; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 5000; text-align: center; padding: 20px; box-sizing: border-box; }
-        .start-btn { position: absolute; bottom: 50px; left: 50%; transform: translateX(-50%); background: var(--primary); color: white; border: none; padding: 15px 40px; border-radius: 30px; font-weight: bold; cursor: pointer; }
+        .start-btn { position: absolute; bottom: 50px; left: 50%; transform: translateX(-50%); background: var(--primary); color: white; border: none; padding: 15px 40px; border-radius: 30px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
 
-        /* 2. APP HEADER */
+        /* HEADER */
         .header { background: var(--dark); color: white; padding: 10px 20px; display: none; justify-content: space-between; align-items: center; height: 60px; position: sticky; top: 0; z-index: 1000; }
-        .menu-btn { background: none; border: none; color: white; font-size: 1.8rem; cursor: pointer; padding: 10px; }
+        .menu-btn { background: #34495e; border: none; color: white; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; }
 
-        /* 3. SIDEBAR */
+        /* SIDEBAR NAVIGATION */
         .sidebar { position: fixed; left: -260px; top: 0; width: var(--sidebar-w); height: 100%; background: white; box-shadow: 5px 0 15px rgba(0,0,0,0.2); transition: 0.3s ease; z-index: 3000; padding-top: 20px; }
-        .sidebar.open { left: 0; }
+        .sidebar.open { left: 0 !important; }
         .sidebar-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; z-index: 2500; }
         .sidebar-overlay.active { display: block; }
         .nav-link { display: block; padding: 15px 25px; color: var(--dark); text-decoration: none; font-weight: 600; cursor: pointer; border-bottom: 1px solid #eee; }
-        .nav-link:hover { background: #f8f9fa; color: var(--primary); }
+        .nav-link:hover { background: #f0f7ff; color: var(--primary); }
 
-        /* 4. MAIN CONTENT */
+        /* MAIN CONTENT */
         .main-content { padding: 20px; max-width: 600px; margin: 0 auto; display: none; }
         .view { display: none; }
         .view.active { display: block !important; }
         .card { background: white; border-radius: 15px; padding: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
         
-        .progress-outer { background: #dfe6e9; border-radius: 10px; height: 8px; width: 100%; margin: 10px 0 20px; overflow: hidden; }
-        .progress-inner { background: var(--success); height: 100%; width: 0%; transition: width 0.5s; }
+        /* PROGRESS BAR */
+        .progress-outer { background: #dfe6e9; border-radius: 10px; height: 10px; width: 100%; margin: 10px 0 20px; overflow: hidden; }
+        .progress-inner { background: var(--success); height: 100%; width: 0%; transition: width 0.5s cubic-bezier(0.1, 0.7, 1.0, 0.1); }
 
-        .mission-text { background: #e8f4f8; padding: 20px; border-radius: 10px; border-left: 5px solid var(--primary); margin: 15px 0; font-style: italic; font-size: 0.95rem; }
-        .hint-box { font-size: 0.8rem; color: #7f8c8d; background: #fef9e7; padding: 10px; border-radius: 5px; margin-bottom: 15px; border: 1px dashed var(--gold); }
+        /* MISSION ELEMENTS */
+        .mission-text { background: #e8f4f8; padding: 20px; border-radius: 10px; border-left: 5px solid var(--primary); margin: 15px 0; font-style: italic; font-size: 0.95rem; line-height: 1.6; }
+        .hint-box { font-size: 0.8rem; color: #7f8c8d; background: #fff9db; padding: 12px; border-radius: 8px; margin-bottom: 15px; border: 1px dashed #f1c40f; }
         
-        textarea { width: 100%; height: 100px; margin-bottom: 15px; padding: 12px; box-sizing: border-box; border-radius: 10px; border: 1px solid #ddd; font-size: 1rem; resize: none; }
-        .btn-submit { background: var(--primary); color: white; border: none; width: 100%; padding: 15px; border-radius: 10px; font-weight: bold; cursor: pointer; }
+        textarea { width: 100%; height: 100px; margin-bottom: 15px; padding: 12px; box-sizing: border-box; border-radius: 10px; border: 1px solid #ddd; font-size: 1rem; resize: none; font-family: inherit; }
+        .btn-submit { background: var(--primary); color: white; border: none; width: 100%; padding: 15px; border-radius: 10px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .btn-submit:active { transform: scale(0.98); }
         
         .ledger-row { padding: 12px 0; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+        .tag { font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; margin-left: 5px; font-weight: bold; text-transform: uppercase; }
+        .tag-bonus { background: var(--gold); color: white; }
     </style>
 </head>
 <body>
 
 <div id="welcome-view">
-    <h1>Scribes Guild</h1>
-    <p>Complete 5 missions today for a 25pt Bonus.</p>
+    <h1 style="margin-bottom:10px;">Hi! How are you?</h1>
+    <p style="opacity:0.8;">Ready to test the Infinite Mission Engine?</p>
     <button class="start-btn" onclick="enterApp()">I'm Ready</button>
 </div>
 
 <div class="sidebar-overlay" id="overlay" onclick="toggleSidebar()"></div>
-
 <div class="sidebar" id="sidebar">
-    <div style="padding: 20px; font-weight: bold; border-bottom: 1px solid #eee;">Guild Menu</div>
+    <div style="padding: 20px; font-weight: bold; border-bottom: 2px solid #f4f4f9;">Guild Control</div>
     <div class="nav-link" onclick="switchView('mission')">🎯 Current Mission</div>
     <div class="nav-link" onclick="switchView('ledger')">📜 My Ledger</div>
-    <div style="padding: 20px 25px; font-size: 0.7rem; color: #999;">SECTORS</div>
+    <div style="padding: 20px 25px; font-size: 0.7rem; color: #aaa; letter-spacing: 1px;">SECTORS</div>
     <div class="nav-link" onclick="changeSector('General', 0)">🌐 General (Easy)</div>
     <div class="nav-link" onclick="changeSector('Medical', 50)">🏥 Medical (Expert)</div>
     <div class="nav-link" onclick="changeSector('Law', 100)">⚖️ Law (Expert)</div>
 </div>
 
 <div class="header" id="app-header">
-    <button class="menu-btn" onclick="toggleSidebar()">☰ Menu</button>
+    <button class="menu-btn" onclick="toggleSidebar()">☰ MENU</button>
     <div style="font-weight: bold; color: var(--gold);"><span id="equity-balance">0</span> pts</div>
 </div>
 
 <div class="main-content" id="main-content">
+    
     <div id="mission-view" class="view active">
         <div class="card">
             <div style="display:flex; justify-content:space-between; font-size: 0.8rem; font-weight: bold;">
                 <span id="active-sector-name">General Sector</span>
-                <span id="daily-count">0 / 5</span>
+                <span id="daily-count">Progress: 0 / 5</span>
             </div>
             <div class="progress-outer"><div class="progress-inner" id="progress-bar"></div></div>
 
             <div id="mission-workspace">
-                <div class="mission-text" id="mission-body">Loading...</div>
-                <div class="hint-box"><strong>💡 Hint:</strong> <span id="mission-hint">Focus on the core meaning.</span></div>
-                <textarea id="submission-box" placeholder="Write your translation here..."></textarea>
-                <button class="btn-submit" onclick="submitWork()">Submit to Ledger</button>
-                <p id="status-msg" style="text-align:center; font-weight:bold; margin-top:10px;"></p>
-            </div>
-
-            <div id="daily-complete" style="display:none; text-align:center;">
-                <h2 style="color:var(--success)">🌟 Daily Goal Met!</h2>
-                <p>+25 Bonus Points added. New missions unlock tomorrow.</p>
+                <div class="mission-text" id="mission-body">Initializing...</div>
+                <div class="hint-box"><strong>💡 PRO TIP:</strong> <span id="mission-hint">Use your own words to explain the text.</span></div>
+                <textarea id="submission-box" placeholder="Type your translation here..."></textarea>
+                <button class="btn-submit" onclick="submitWork()">Submit Submission</button>
+                <p id="status-msg" style="text-align:center; font-weight:bold; margin-top:10px; font-size: 0.85rem;"></p>
             </div>
         </div>
     </div>
 
     <div id="ledger-view" class="view">
         <div class="card">
-            <h2>Ledger</h2>
+            <h2 style="margin-top:0;">Your History</h2>
             <div id="ledger-list"></div>
         </div>
     </div>
 </div>
 
 <script>
+    // --- COMPREHENSIVE QUESTION LIBRARIES ---
     const missionLibrary = {
         'General': [
-            { t: "The local park will close at 8 PM for cleaning.", h: "Mention the time and the reason." },
-            { t: "Eating vegetables daily helps keep your body healthy.", h: "Focus on the benefit of a good diet." },
-            { t: "Please remember to bring your umbrella if it rains.", h: "A simple reminder about the weather." }
+            { t: "The local grocery store is having a sale on fresh fruit this weekend.", h: "Focus on where and what is happening." },
+            { t: "Please remember to turn off the lights when you leave the room.", h: "Translate this as a helpful reminder." },
+            { t: "The train was delayed by ten minutes due to heavy rain.", h: "Explain why the train is late." },
+            { t: "Learning a new language opens up many career opportunities.", h: "Focus on the benefits mentioned." }
         ],
         'Medical': [
-            { t: "The patient shows signs of acute pulmonary congestion.", h: "Look up 'acute' and 'pulmonary' context." },
-            { t: "Administer the prophylactic dosage before surgical intervention.", h: "Focus on preventative care terms." }
+            { t: "The patient is experiencing acute episodes of tachycardia.", h: "Tachycardia refers to a rapid heart rate." },
+            { t: "Apply a topical analgesic to the affected area three times daily.", h: "Analgesic means pain-reliever." },
+            { t: "The MRI scan showed no abnormalities in the cerebral cortex.", h: "Focus on the results of the brain scan." }
         ],
         'Law': [
-            { t: "The defendant entered a plea of nolo contendere.", h: "This means 'no contest' in legal terms." },
-            { t: "All proprietary rights are reserved under the copyright act.", h: "Focus on ownership and legal protection." }
-        ]
-    };
-
-    let currentSector = 'General';
-    let equity = parseInt(localStorage.getItem('equityPoints') || 0);
-    let history = JSON.parse(localStorage.getItem('scribeHistory') || "[]");
-    let dailyDone = parseInt(localStorage.getItem('dailyDone') || 0);
-
-    function enterApp() {
-        document.getElementById('welcome-view').style.display = 'none';
-        document.getElementById('app-header').style.display = 'flex';
-        document.getElementById('main-content').style.display = 'block';
-        updateUI();
-        loadNewMission();
-    }
-
-    function toggleSidebar() {
-        document.getElementById('sidebar').classList.toggle('open');
-        document.getElementById('overlay').classList.toggle('active');
-    }
-
-    function switchView(viewId) {
-        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-        document.getElementById(viewId + '-view').classList.add('active');
-        if(viewId === 'ledger') renderLedger();
-        toggleSidebar();
-    }
-
-    function changeSector(name, req) {
-        if (equity < req) { alert(`Locked! You need ${req} points.`); return; }
-        currentSector = name;
-        document.getElementById('active-sector-name').innerText = name + " Sector";
-        loadNewMission();
-        switchView('mission');
-    }
-
-    function loadNewMission() {
-        const pool = missionLibrary[currentSector];
-        const item = pool[Math.floor(Math.random() * pool.length)];
-        document.getElementById('mission-body').innerText = item.t;
-        document.getElementById('mission-hint').innerText = item.h;
-    }
-
-    function updateUI() {
-        document.getElementById('equity-balance').innerText = equity;
-        document.getElementById('daily-count').innerText = `${dailyDone} / 5`;
-        document.getElementById('progress-bar').style.width = (dailyDone / 5 * 100) + "%";
-        if (dailyDone >= 5) {
-            document.getElementById('mission-workspace').style.display = 'none';
-            document.getElementById('daily-complete').style.display = 'block';
-        }
-    }
-
-    function submitWork() {
-        const text = document.getElementById('submission-box').value.trim();
-        if (!text) return;
-        
-        let reward = 10;
-        dailyDone++;
-        if (dailyDone === 5) reward += 25;
-
-        equity += reward;
-        localStorage.setItem('equityPoints', equity);
-        localStorage.setItem('dailyDone', dailyDone);
-        
-        history.unshift({ sector: currentSector, pts: reward, date: new Date().toLocaleTimeString() });
-        localStorage.setItem('scribeHistory', JSON.stringify(history));
-
-        document.getElementById('submission-box').value = "";
-        updateUI();
-        if (dailyDone < 5) loadNewMission();
-        alert(`+${reward} Points!`);
-    }
-
-    function renderLedger() {
-        const list = document.getElementById('ledger-list');
-        list.innerHTML = history.length ? history.map(h => `
-            <div class="ledger-row">
-                <span>${h.sector}</span>
-                <strong>+${h.pts}</strong>
-            </div>`).join('') : "No records yet.";
-    }
-
-    updateUI();
-</script>
-</body>
-</html>
+            { t: "The contract shall be governed by the laws of the State
